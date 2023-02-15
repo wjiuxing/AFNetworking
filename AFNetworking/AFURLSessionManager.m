@@ -251,6 +251,7 @@ didCompleteWithError:(NSError *)error
               task:(NSURLSessionTask *)task
 didFinishCollectingMetrics:(NSURLSessionTaskMetrics *)metrics AF_API_AVAILABLE(ios(10), macosx(10.12), watchos(3), tvos(10)) {
     self.sessionTaskMetrics = metrics;
+    [NSNotificationCenter.defaultCenter postNotificationName:@"netMonitorNotification" object:self userInfo:@{@"metrics" : metrics}];
 }
 #endif
 
@@ -1089,6 +1090,10 @@ didCompleteWithError:(NSError *)error
 
     if (self.taskDidComplete) {
         self.taskDidComplete(session, task, error);
+    }
+    
+    if (error) {
+        [NSNotificationCenter.defaultCenter postNotificationName:@"netMonitorNotificationError" object:self userInfo:@{@"error" : error, @"task" : task}];
     }
 }
 
